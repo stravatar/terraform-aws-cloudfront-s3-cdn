@@ -181,6 +181,12 @@ variable "price_class" {
   description = "Price class for this distribution: `PriceClass_All`, `PriceClass_200`, `PriceClass_100`"
 }
 
+variable "http_version" {
+  type        = string
+  default     = "http22"
+  description = "Version of http_version for Cloudfront distribution: `http1`, `http2`, `http2and3`, `http3`"
+}
+
 variable "response_headers_policy_id" {
   type        = string
   description = "The identifier for a response headers policy"
