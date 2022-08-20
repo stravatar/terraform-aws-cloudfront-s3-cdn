@@ -183,7 +183,7 @@ variable "price_class" {
 
 variable "http_version" {
   type        = string
-  default     = "http22"
+  default     = "http2"
   description = "Version of http_version for Cloudfront distribution: `http1`, `http2`, `http2and3`, `http3`"
 }
 
