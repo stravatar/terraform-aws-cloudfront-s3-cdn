@@ -249,27 +249,6 @@ resource "aws_s3_bucket" "origin" {
       target_prefix = coalesce(var.s3_access_log_prefix, "logs/${local.origin_id}/")
     }
   }
-
-  dynamic "website" {
-    for_each = var.website_enabled ? local.website_config[var.redirect_all_requests_to == "" ? "default" : "redirect_all"] : []
-    content {
-      error_document           = lookup(website.value, "error_document", null)
-      index_document           = lookup(website.value, "index_document", null)
-      redirect_all_requests_to = lookup(website.value, "redirect_all_requests_to", null)
-      routing_rules            = lookup(website.value, "routing_rules", null)
-    }
-  }
-
-  dynamic "cors_rule" {
-    for_each = distinct(compact(concat(var.cors_allowed_origins, var.aliases, var.external_aliases)))
-    content {
-      allowed_headers = var.cors_allowed_headers
-      allowed_methods = var.cors_allowed_methods
-      allowed_origins = [cors_rule.value]
-      expose_headers  = var.cors_expose_headers
-      max_age_seconds = var.cors_max_age_seconds
-    }
-  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_sse" {
@@ -287,6 +266,35 @@ resource "aws_s3_bucket_versioning" "bucket_versioning" {
   bucket = local.bucket
   versioning_configuration {
     status = var.versioning_enabled ? "Enabled" : "Disabled"
+  }
+}
+
+resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
+  bucket = local.bucket
+
+  dynamic "cors_rule" {
+    for_each = distinct(compact(concat(var.cors_allowed_origins, var.aliases, var.external_aliases)))
+    content {
+      allowed_headers = var.cors_allowed_headers
+      allowed_methods = var.cors_allowed_methods
+      allowed_origins = [cors_rule.value]
+      expose_headers  = var.cors_expose_headers
+      max_age_seconds = var.cors_max_age_seconds
+    }
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "bucket_website_config" {
+  bucket = local.bucket
+
+  dynamic "website" {
+    for_each = var.website_enabled ? local.website_config[var.redirect_all_requests_to == "" ? "default" : "redirect_all"] : []
+    content {
+      error_document           = lookup(website.value, "error_document", null)
+      index_document           = lookup(website.value, "index_document", null)
+      redirect_all_requests_to = lookup(website.value, "redirect_all_requests_to", null)
+      routing_rules            = lookup(website.value, "routing_rules", null)
+    }
   }
 }
 
