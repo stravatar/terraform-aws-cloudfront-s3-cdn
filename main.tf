@@ -281,8 +281,8 @@ resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
   }
 }
 
-resource "aws_s3_bucket_logging" "example" {
-  for_each = local.s3_access_log_bucket_name != "" ? local.s3_access_log_bucket_name : null
+resource "aws_s3_bucket_logging" "bucket_logging" {
+  count = local.s3_access_log_bucket_name != "" ? 1 : 0
   bucket = local.bucket
 
   target_bucket = local.s3_access_log_bucket_name
