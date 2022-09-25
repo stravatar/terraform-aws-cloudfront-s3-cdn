@@ -242,6 +242,8 @@ it can return the contents of a special file called an "error document".
 
 #### Your Critical Decision: S3 bucket or website?
 
+# NOTE S3 AS A STATIC WEBSITE HAS BEEN REMOVED IN THIS MODULE
+
 All of this background is to help you decide how to set `website_enabled` and `s3_website_password_enabled`.
 The default for `website_enabled` is `false` which is the easiest to configure and the most secure, and with
 this setting, `s3_website_password_enabled` is ignored.

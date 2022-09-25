@@ -284,15 +284,6 @@ resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "bucket_website_config" {
-  bucket = local.bucket
-
-  error_document           = lookup(local.website_config, "error_document", null)
-  index_document           = lookup(local.website_config, "index_document", null)
-  redirect_all_requests_to = lookup(local.website_config, "redirect_all_requests_to", null)
-  routing_rules            = lookup(local.website_config, "routing_rules", null)
-}
-
 resource "aws_s3_bucket_public_access_block" "origin" {
   count                   = (local.create_s3_origin_bucket || local.override_origin_bucket_policy) && var.block_origin_public_access_enabled ? 1 : 0
   bucket                  = local.bucket
