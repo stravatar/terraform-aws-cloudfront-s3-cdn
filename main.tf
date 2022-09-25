@@ -242,10 +242,6 @@ resource "aws_s3_bucket" "origin" {
   tags          = module.origin_label.tags
   force_destroy = var.origin_force_destroy
 
-  versioning {
-    enabled = var.versioning_enabled
-  }
-
   dynamic "logging" {
     for_each = local.s3_access_log_bucket_name != "" ? [1] : []
     content {
@@ -284,6 +280,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_sse" {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "bucket_versioning" {
+  bucket = local.bucket
+  versioning_configuration {
+    status = var.versioning_enabled ? "Enabled" : "Disabled"
   }
 }
 
