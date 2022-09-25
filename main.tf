@@ -243,6 +243,11 @@ resource "aws_s3_bucket" "origin" {
   force_destroy = var.origin_force_destroy
 }
 
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  bucket = local.bucket
+  acl    = "private"
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_sse" {
   count = var.encryption_enabled ? 1 : 0
   bucket = local.bucket
@@ -277,7 +282,7 @@ resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
 }
 
 resource "aws_s3_bucket_logging" "example" {
-  for_each = local.s3_access_log_bucket_name != "" ? [1] : []
+  for_each = local.s3_access_log_bucket_name ? local.s3_access_log_bucket_name : null
   bucket = local.bucket
 
   target_bucket = local.s3_access_log_bucket_name
