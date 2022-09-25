@@ -282,7 +282,6 @@ resource "aws_s3_bucket_logging" "example" {
 
   target_bucket = local.s3_access_log_bucket_name
   target_prefix = coalesce(var.s3_access_log_prefix, "logs/${local.origin_id}/")
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "origin" {
