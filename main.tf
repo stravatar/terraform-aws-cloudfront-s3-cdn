@@ -287,15 +287,10 @@ resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
 resource "aws_s3_bucket_website_configuration" "bucket_website_config" {
   bucket = local.bucket
 
-  dynamic "website" {
-    for_each = var.website_enabled ? local.website_config[var.redirect_all_requests_to == "" ? "default" : "redirect_all"] : []
-    content {
-      error_document           = lookup(website.value, "error_document", null)
-      index_document           = lookup(website.value, "index_document", null)
-      redirect_all_requests_to = lookup(website.value, "redirect_all_requests_to", null)
-      routing_rules            = lookup(website.value, "routing_rules", null)
-    }
-  }
+  error_document           = lookup(local.website_config, "error_document", null)
+  index_document           = lookup(local.website_config, "index_document", null)
+  redirect_all_requests_to = lookup(local.website_config, "redirect_all_requests_to", null)
+  routing_rules            = lookup(local.website_config, "routing_rules", null)
 }
 
 resource "aws_s3_bucket_public_access_block" "origin" {
