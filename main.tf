@@ -241,14 +241,6 @@ resource "aws_s3_bucket" "origin" {
   acl           = "private"
   tags          = module.origin_label.tags
   force_destroy = var.origin_force_destroy
-
-  dynamic "logging" {
-    for_each = local.s3_access_log_bucket_name != "" ? [1] : []
-    content {
-      target_bucket = local.s3_access_log_bucket_name
-      target_prefix = coalesce(var.s3_access_log_prefix, "logs/${local.origin_id}/")
-    }
-  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_sse" {
@@ -281,6 +273,15 @@ resource "aws_s3_bucket_cors_configuration" "bucket_cors" {
       expose_headers  = var.cors_expose_headers
       max_age_seconds = var.cors_max_age_seconds
     }
+  }
+}
+
+resource "aws_s3_bucket_logging" "example" {
+  for_each = local.s3_access_log_bucket_name != "" ? [1] : []
+  bucket = local.bucket
+
+  target_bucket = local.s3_access_log_bucket_name
+  target_prefix = coalesce(var.s3_access_log_prefix, "logs/${local.origin_id}/")
   }
 }
 
